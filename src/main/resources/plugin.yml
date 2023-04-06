@@ -1,0 +1,4 @@
+name: Bingo
+version: '${project.version}'
+main: mcup.gamemode.bingo.Bingo
+api-version: 1.18
