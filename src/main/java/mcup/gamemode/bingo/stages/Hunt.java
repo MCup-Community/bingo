@@ -4,16 +4,10 @@ import mcup.core.Core;
 import mcup.core.stages.GamemodeStage;
 import mcup.gamemode.bingo.Bingo;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.block.data.BlockData;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.net.URL;
 
 public class Hunt extends GamemodeStage {
 
@@ -23,12 +17,20 @@ public class Hunt extends GamemodeStage {
 
     initBossBarCountdown();
 
-    Player player = Bukkit.getPlayer("GoracioNewport");
+    plugin.core.apiManager.playerManager.setGlobalGamemode(GameMode.SURVIVAL);
 
-    plugin.storage.giveBingoMap(player);
+    plugin.storage.initCollectedItems();
+    plugin.storage.readBingoItems();
+
+
+    Player player = Bukkit.getPlayer("GoracioNewport");
+    plugin.storage.giveDefaultEquipment(player);
   }
 
 
+  // Get item from Chest - InventoryInteract
+  // Craft item - InventoryInteract
+  // Pickup item - PlayerPickup
 
 
 

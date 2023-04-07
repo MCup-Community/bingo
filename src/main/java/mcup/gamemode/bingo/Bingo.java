@@ -3,6 +3,7 @@ package mcup.gamemode.bingo;
 import mcup.core.Core;
 import mcup.core.StageManager;
 import mcup.core.stages.Waiting;
+import mcup.gamemode.bingo.listeners.PlayerListener;
 import mcup.gamemode.bingo.stages.Hunt;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -39,6 +40,8 @@ public final class Bingo extends JavaPlugin {
         saveDefaultConfig();
 
         storage = new Storage(this);
+
+        getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
 
         core.stageManager.startSequence();
     }
