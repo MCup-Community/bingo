@@ -10,7 +10,6 @@ import org.bukkit.map.MapView;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.awt.image.PixelGrabber;
 import java.io.File;
 
 public class BingoMapRenderer extends MapRenderer {

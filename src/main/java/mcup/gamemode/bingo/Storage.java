@@ -2,7 +2,9 @@ package mcup.gamemode.bingo;
 
 import mcup.core.local.data.Team;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.MapMeta;
@@ -56,6 +58,10 @@ public class Storage {
 
   }
 
+  public int getBingoGridSize() {
+    return (int)Math.sqrt(items.size());
+  }
+
   public void updateCollectedItems(Player player, Material material) {
     Team playerTeam = plugin.core.apiManager.teamManager.getTeamByPlayer(player.getName());
 
@@ -79,12 +85,119 @@ public class Storage {
     for (mcup.core.local.data.Player teamPlayer : playerTeam.players)
       scheduledMapUpdate.add(teamPlayer.nickname);
 
+    checkBingo(player, material);
     plugin.core.apiManager.scoreManager.addScorePlayer(player.getName(), singleItemScoreValue, "Собран предмет: " + material.name());
 
 
-    // TODO: Check for bingo!
   }
 
+  public void checkBingo(Player player, Material material) {
+
+    Team playerTeam = plugin.core.apiManager.teamManager.getTeamByPlayer(player.getName());
+
+    int index = -1;
+
+    for (int i = 0; i < items.size(); i++)
+      if (items.get(i).material == material)
+        index = i;
+
+    if (index == -1)
+      return;
+
+    int row = index / getBingoGridSize();
+    int column = index % getBingoGridSize();
+
+    int bingoScoreValue = plugin.getConfig().getInt("bingoScoreValue");
+
+    boolean bingoCollected = false;
+
+    if (checkHorizontalBingo(row, playerTeam)) {
+      plugin.core.apiManager.scoreManager.addScorePlayer(player.getName(), bingoScoreValue, "Бинго по горизонтали!");
+      bingoCollected = true;
+    }
+
+
+    if (checkVerticalBingo(column, playerTeam)) {
+      plugin.core.apiManager.scoreManager.addScorePlayer(player.getName(), bingoScoreValue, "Бинго по вертикали!");
+      bingoCollected = true;
+    }
+
+
+    if (checkDiagonalBingo(0, playerTeam)) {
+      plugin.core.apiManager.scoreManager.addScorePlayer(player.getName(), bingoScoreValue, "Бинго по диагонали!");
+      bingoCollected = true;
+    }
+
+
+    if (checkDiagonalBingo(1, playerTeam)) {
+      plugin.core.apiManager.scoreManager.addScorePlayer(player.getName(), bingoScoreValue, "Бинго по диагонали!");
+      bingoCollected = true;
+    }
+
+    if (bingoCollected) {
+      plugin.core.apiManager.playerManager.sendTeamTitle(
+        ChatColor.YELLOW + "Бинго!",
+        "Отличная работа!",
+        10,
+        30,
+        10,
+        playerTeam
+      );
+
+      plugin.core.apiManager.playerManager.playTeamSound(Sound.ITEM_TRIDENT_THUNDER, 1.0f, playerTeam);
+    }
+  }
+
+  private boolean checkHorizontalBingo(int row, Team team) {
+
+    for (int i = 0; i < getBingoGridSize(); i++) {
+      int index = row * getBingoGridSize() + i;
+
+      if (!collectedItems.get(team.name).contains(items.get(index).material))
+        return false;
+    }
+
+    return true;
+  }
+
+  private boolean checkVerticalBingo(int column, Team team) {
+
+    for (int i = 0; i < getBingoGridSize(); i++) {
+      int index = column + i * getBingoGridSize();
+
+      if (!collectedItems.get(team.name).contains(items.get(index).material))
+        return false;
+    }
+
+    return true;
+  }
+
+  private boolean checkDiagonalBingo(int corner, Team team) {
+
+    if (corner == 0) { // Top left to bottom right
+
+      for (int i = 0; i < getBingoGridSize(); i++) {
+        int index = i * getBingoGridSize() + i;
+
+        if (!collectedItems.get(team.name).contains(items.get(index).material))
+          return false;
+      }
+
+    }
+
+    else { // Top right to bottom left
+
+      for (int i = 0; i < getBingoGridSize(); i++) {
+        int index = i * getBingoGridSize() + (getBingoGridSize() - i - 1);
+
+        if (!collectedItems.get(team.name).contains(items.get(index).material))
+          return false;
+      }
+
+    }
+    return true;
+
+  }
 
   public HashMap<String, HashSet<Material>> collectedItems = new HashMap<>();
 
