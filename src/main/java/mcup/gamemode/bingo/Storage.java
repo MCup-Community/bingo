@@ -25,16 +25,21 @@ public class Storage {
 
   public void readBingoItems() {
 
-    if (plugin.getConfig().getList("items") == null) {
+    if (plugin.getConfig().getConfigurationSection("items") == null) {
       plugin.getLogger().warning("No items value was found in plugin config!");
       return;
     }
 
     items.clear();
 
-    for (String itemName : plugin.getConfig().getStringList("items")) {
+    int itemCount = 25;
+
+    for(int i = 0; i < itemCount; i++) {
 
       try {
+        String itemName = plugin.getConfig().getString("items." + i + ".material");
+        String translation = plugin.getConfig().getString("items." + i + ".translation");
+
         Material itemMaterial = Material.getMaterial(itemName.toUpperCase());
 
         File textureFile = new File("./textures/" + itemName.toLowerCase() + ".png");
@@ -43,11 +48,12 @@ public class Storage {
 
         items.add(new BingoItem(itemMaterial, itemTexture));
         materialsSet.add(itemMaterial);
+        itemTranslations.put(itemMaterial, translation);
       }
 
       catch (Exception e) {
         e.printStackTrace();
-        plugin.getLogger().warning("Unable to read item " + itemName + " from plugin config");
+        plugin.getLogger().warning("Unable to read item from plugin config");
       }
 
     }
@@ -90,7 +96,8 @@ public class Storage {
 
     checkBingo(player, material);
 
-    plugin.core.apiManager.scoreManager.addScorePlayer(player.getName(), singleItemScoreValue, "Собран предмет: " + material.toString());
+    plugin.core.apiManager.scoreManager.addScorePlayer(player.getName(),
+      singleItemScoreValue, "Собран предмет: " + (itemTranslations.getOrDefault(material, "предмет")));
   }
 
   public void checkBingo(Player player, Material material) {
@@ -212,6 +219,8 @@ public class Storage {
 
   public HashSet <String> playersWithEquipment = new HashSet<>();
 
+  public HashMap<Material, String> itemTranslations = new HashMap<>();
+
   public void giveDefaultEquipment(Player player, int ticksDuration) {
     giveTools(player);
     giveBingoMap(player);
@@ -263,6 +272,9 @@ public class Storage {
     materialsSet.clear();
     collectedItems.clear();
     scheduledMapInit.clear();
+    scheduledMapUpdate.clear();
+    playersWithEquipment.clear();
+    itemTranslations.clear();
   }
 
   private final Bingo plugin;

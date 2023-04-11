@@ -46,11 +46,23 @@ public class Hunt extends GamemodeStage {
   public void tickSecond() {
     super.tickSecond();
 
-
     if (getSecondsLeft() == 60 || getSecondsLeft() == 10) {
       core.apiManager.playerManager.sendTitle(
         ChatColor.YELLOW + "" + getSecondsLeft(),
         "секунд до конца охоты!",
+        5,
+        30,
+        10,
+        Bukkit.getOnlinePlayers()
+      );
+
+      core.apiManager.playerManager.playSound(Sound.BLOCK_NOTE_BLOCK_PLING, 1.0f, Bukkit.getOnlinePlayers());
+    }
+
+    if (getSecondsLeft() == 5 * 60) {
+      core.apiManager.playerManager.sendTitle(
+        ChatColor.YELLOW + "" + getSecondsLeft() / 60,
+        "минут до конца охоты!",
         5,
         30,
         10,
