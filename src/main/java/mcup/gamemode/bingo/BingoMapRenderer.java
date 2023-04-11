@@ -57,8 +57,8 @@ public class BingoMapRenderer extends MapRenderer {
           break;
 
         mapCanvas.drawImage(
-          getCellCoordinate(i) + borderThickness + cellPadding,
           getCellCoordinate(j) + borderThickness + cellPadding,
+          getCellCoordinate(i) + borderThickness + cellPadding,
           plugin.storage.items.get(currentItemIndex).texture
         );
       }
@@ -86,8 +86,8 @@ public class BingoMapRenderer extends MapRenderer {
           continue;
 
         drawTransparentImage(
-          getCellCoordinate(i) + borderThickness + cellPadding + markMargin,
           getCellCoordinate(j) + borderThickness + cellPadding + markMargin,
+          getCellCoordinate(i) + borderThickness + cellPadding + markMargin,
           markImage,
           mapCanvas
         );

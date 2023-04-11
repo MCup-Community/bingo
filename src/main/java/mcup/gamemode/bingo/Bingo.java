@@ -4,8 +4,11 @@ import mcup.core.Core;
 import mcup.core.StageManager;
 import mcup.core.stages.Waiting;
 import mcup.gamemode.bingo.listeners.PlayerListener;
+import mcup.gamemode.bingo.stages.Countdown;
+import mcup.gamemode.bingo.stages.Ending;
 import mcup.gamemode.bingo.stages.Hunt;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
@@ -32,7 +35,9 @@ public final class Bingo extends JavaPlugin {
         core.registerStageManager(
           new StageManager(core, this, new ArrayList<>(Arrays.asList(
             Waiting.class,
-            Hunt.class
+            Countdown.class,
+            Hunt.class,
+            Ending.class
           )))
         );
 

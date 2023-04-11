@@ -5,10 +5,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.map.MapView;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -86,9 +89,8 @@ public class Storage {
       scheduledMapUpdate.add(teamPlayer.nickname);
 
     checkBingo(player, material);
-    plugin.core.apiManager.scoreManager.addScorePlayer(player.getName(), singleItemScoreValue, "Собран предмет: " + material.name());
 
-
+    plugin.core.apiManager.scoreManager.addScorePlayer(player.getName(), singleItemScoreValue, "Собран предмет: " + material.toString());
   }
 
   public void checkBingo(Player player, Material material) {
@@ -136,7 +138,7 @@ public class Storage {
 
     if (bingoCollected) {
       plugin.core.apiManager.playerManager.sendTeamTitle(
-        ChatColor.YELLOW + "Бинго!",
+        ChatColor.GOLD + "Бинго!",
         "Отличная работа!",
         10,
         30,
@@ -208,8 +210,12 @@ public class Storage {
 
   public HashSet <String> scheduledMapUpdate = new HashSet<>();
 
-  public void giveDefaultEquipment(Player player) {
+  public HashSet <String> playersWithEquipment = new HashSet<>();
+
+  public void giveDefaultEquipment(Player player, int ticksDuration) {
+    giveTools(player);
     giveBingoMap(player);
+    giveEffects(player, ticksDuration);
   }
 
   public void giveBingoMap(Player player) {
@@ -230,6 +236,26 @@ public class Storage {
     mapItem.setItemMeta(mapMeta);
 
     player.getInventory().addItem(mapItem);
+  }
+
+  public void giveTools(Player player) {
+
+    ItemStack pickaxe = new ItemStack(Material.NETHERITE_PICKAXE);
+    ItemStack axe = new ItemStack(Material.NETHERITE_AXE);
+    ItemStack shovel = new ItemStack(Material.NETHERITE_SHOVEL);
+
+    pickaxe.addEnchantment(Enchantment.DURABILITY, 3);
+    axe.addEnchantment(Enchantment.DURABILITY, 3);
+    shovel.addEnchantment(Enchantment.DURABILITY, 3);
+
+    player.getInventory().addItem(pickaxe);
+    player.getInventory().addItem(axe);
+    player.getInventory().addItem(shovel);
+  }
+
+  public void giveEffects(Player player, int ticksDuration) {
+    player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, ticksDuration, 1));
+    player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, ticksDuration, 1));
   }
 
   public void resetStorage() {
