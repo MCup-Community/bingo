@@ -9,6 +9,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.MapMeta;
+import org.bukkit.map.MapRenderer;
 import org.bukkit.map.MapView;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -228,7 +229,6 @@ public class Storage {
   }
 
   public void giveBingoMap(Player player) {
-
     scheduledMapInit.add(player.getName());
 
     ItemStack mapItem = new ItemStack(Material.FILLED_MAP, 1);
@@ -238,7 +238,9 @@ public class Storage {
 
     BingoMapRenderer mapRenderer = new BingoMapRenderer(plugin);
 
-    mapView.getRenderers().clear();
+    for (MapRenderer renderer : mapView.getRenderers())
+      mapView.removeRenderer(renderer);
+
     mapView.addRenderer(mapRenderer);
 
     mapMeta.setMapView(mapView);

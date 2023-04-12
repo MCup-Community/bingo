@@ -3,7 +3,6 @@ package mcup.gamemode.bingo.stages;
 import mcup.core.Core;
 import mcup.core.stages.GamemodeStage;
 import mcup.gamemode.bingo.Bingo;
-import net.kyori.adventure.bossbar.BossBar;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
