@@ -1,15 +1,12 @@
 package mcup.gamemode.bingo.stages;
 
 import mcup.core.Core;
-import mcup.core.stages.GamemodeStage;
+import mcup.core.local.data.Player;
 import mcup.gamemode.bingo.Bingo;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
-import org.bukkit.Sound;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class Countdown extends GamemodeStage {
+public class Countdown extends mcup.core.stages.Countdown {
 
   @Override
   public void load() {
@@ -17,36 +14,21 @@ public class Countdown extends GamemodeStage {
     initBossBarCountdown();
     core.apiManager.playerManager.setPlayersGamemode(GameMode.ADVENTURE);
     core.apiManager.playerManager.clearPlayersInventory();
+    core.apiManager.playerManager.clearPlayersEffects();
 
-    core.apiManager.playerManager.sendTitle(
-      ChatColor.YELLOW + "" + getSecondsLeft(),
-      (getSecondsLeft() % 10 == 0 ) ? "секунд до начала охоты" : "",
-      5,
-      10,
-      5,
-      Bukkit.getOnlinePlayers()
-    );
+    getSpawnLocations();
+    spawnPlayers();
 
-    core.apiManager.playerManager.playSound(Sound.UI_BUTTON_CLICK, 1.0f, Bukkit.getOnlinePlayers());
+    for (Player player : core.apiManager.playerManager.getPlayers())
+      plugin.storage.giveEffects(player.nickname, timeLimit + 10 * 20);
   }
 
   @Override
-  public void tickSecond() {
-    super.tickSecond();
+  protected boolean updateSkipCondition(int secondsRemaining) {
+    if (secondsRemaining == 30 || secondsRemaining == 15 || secondsRemaining <= 10)
+      return false;
 
-    if (getSecondsLeft() == 20 || getSecondsLeft() <= 10) {
-      core.apiManager.playerManager.sendTitle(
-        ChatColor.YELLOW + "" + getSecondsLeft(),
-        (getSecondsLeft() % 10 == 0 ) ? "секунд до начала охоты" : "",
-        5,
-        10,
-        5,
-        Bukkit.getOnlinePlayers()
-      );
-
-      core.apiManager.playerManager.playSound(Sound.UI_BUTTON_CLICK, 1.0f, Bukkit.getOnlinePlayers());
-    }
-
+    return true;
   }
 
   protected Bingo plugin;

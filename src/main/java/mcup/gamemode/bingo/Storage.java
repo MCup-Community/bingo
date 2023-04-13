@@ -95,10 +95,10 @@ public class Storage {
     for (mcup.core.local.data.Player teamPlayer : playerTeam.players)
       scheduledMapUpdate.add(teamPlayer.nickname);
 
-    checkBingo(player, material);
-
     plugin.core.apiManager.scoreManager.addScorePlayer(player.getName(),
       singleItemScoreValue, "Собран предмет: " + (itemTranslations.getOrDefault(material, "предмет")));
+
+    checkBingo(player, material);
   }
 
   public void checkBingo(Player player, Material material) {
@@ -222,19 +222,19 @@ public class Storage {
 
   public HashMap<Material, String> itemTranslations = new HashMap<>();
 
-  public void giveDefaultEquipment(Player player, int ticksDuration) {
-    giveTools(player);
-    giveBingoMap(player);
-    giveEffects(player, ticksDuration);
+  public void giveDefaultEquipment(String playerName, int ticksDuration) {
+    giveTools(playerName);
+    giveBingoMap(playerName);
+    giveEffects(playerName, ticksDuration);
   }
 
-  public void giveBingoMap(Player player) {
-    scheduledMapInit.add(player.getName());
+  public void giveBingoMap(String playerName) {
+    scheduledMapInit.add(playerName);
 
     ItemStack mapItem = new ItemStack(Material.FILLED_MAP, 1);
     MapMeta mapMeta = (MapMeta) mapItem.getItemMeta();
 
-    MapView mapView = Bukkit.createMap(player.getWorld());
+    MapView mapView = Bukkit.createMap(Bukkit.getWorld("world"));
 
     BingoMapRenderer mapRenderer = new BingoMapRenderer(plugin);
 
@@ -246,10 +246,13 @@ public class Storage {
     mapMeta.setMapView(mapView);
     mapItem.setItemMeta(mapMeta);
 
-    player.getInventory().addItem(mapItem);
+    ArrayList<ItemStack> items = new ArrayList<>();
+    items.add(mapItem);
+
+    plugin.core.apiManager.playerManager.givePlayerItems(items, playerName);
   }
 
-  public void giveTools(Player player) {
+  public void giveTools(String playerName) {
 
     ItemStack pickaxe = new ItemStack(Material.NETHERITE_PICKAXE);
     ItemStack axe = new ItemStack(Material.NETHERITE_AXE);
@@ -259,14 +262,21 @@ public class Storage {
     axe.addEnchantment(Enchantment.DURABILITY, 3);
     shovel.addEnchantment(Enchantment.DURABILITY, 3);
 
-    player.getInventory().addItem(pickaxe);
-    player.getInventory().addItem(axe);
-    player.getInventory().addItem(shovel);
+    ArrayList<ItemStack> items = new ArrayList<>();
+
+    items.add(pickaxe);
+    items.add(axe);
+    items.add(shovel);
+
+    plugin.core.apiManager.playerManager.givePlayerItems(items, playerName);
   }
 
-  public void giveEffects(Player player, int ticksDuration) {
-    player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, ticksDuration, 1));
-    player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, ticksDuration, 1));
+  public void giveEffects(String playerName, int ticksDuration) {
+    ArrayList<PotionEffect> potionEffects = new ArrayList<>();
+    potionEffects.add(new PotionEffect(PotionEffectType.SPEED, ticksDuration, 1));
+    potionEffects.add(new PotionEffect(PotionEffectType.JUMP, ticksDuration, 1));
+
+    plugin.core.apiManager.playerManager.givePlayerEffects(potionEffects, playerName);
   }
 
   public void resetStorage() {

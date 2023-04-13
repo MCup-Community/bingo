@@ -1,13 +1,13 @@
 package mcup.gamemode.bingo.stages;
 
 import mcup.core.Core;
+import mcup.core.local.data.Player;
 import mcup.core.stages.GamemodeStage;
 import mcup.gamemode.bingo.Bingo;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Sound;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 
@@ -24,10 +24,8 @@ public class Hunt extends GamemodeStage {
     plugin.storage.initCollectedItems();
     plugin.storage.readBingoItems();
 
-    for (Player player : Bukkit.getOnlinePlayers()) {
-      plugin.storage.giveDefaultEquipment(player, timeLimit);
-      plugin.storage.playersWithEquipment.add(player.getName());
-    }
+    for (Player player : core.apiManager.playerManager.getPlayers())
+      plugin.storage.giveDefaultEquipment(player.nickname, timeLimit);
 
     core.apiManager.playerManager.sendTitle(
       ChatColor.GOLD + "Охота началась!",

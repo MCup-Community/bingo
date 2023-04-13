@@ -43,15 +43,6 @@ public class PlayerListener implements Listener {
   }
 
   @EventHandler
-  public void onPlayerJoin(PlayerJoinEvent event) {
-    if (!(plugin.core.stageManager.getCurrentStage() instanceof Hunt))
-      return;
-
-    plugin.storage.giveDefaultEquipment(event.getPlayer(), plugin.core.stageManager.getCurrentStage().timeLimit);
-    plugin.storage.playersWithEquipment.add(event.getPlayer().getName());
-  }
-
-  @EventHandler
   public void onEntityDamage(EntityDamageEvent event) {
     if (event.getEntity() instanceof Player)
       event.setCancelled(true);
